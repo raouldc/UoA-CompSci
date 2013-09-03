@@ -10,14 +10,22 @@ public class Staff {
 		_email = email;
 	}
 
-
-	public String getName() {
-		// TODO Auto-generated method stub
+	public String get_name() {
 		return _name;
 	}
 
-	public String getEmail() {
-		// TODO Auto-generated method stub
+	public void set_name(String _name) {
+		this._name = _name;
+	}
+
+	public String get_email() {
 		return _email;
 	}
+
+	public void set_email(String _email) {
+		this._email = _email;
+	}
+
+
+
 }

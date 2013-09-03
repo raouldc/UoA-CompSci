@@ -1,5 +1,10 @@
 package com.raouldc.uoacompsci;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -17,10 +22,26 @@ public class CoursesSectionFragment extends ListFragment implements
 		super.onCreate(savedInstanceState);
 		// Get the view from fragment_courses.xml
 		getActivity().setContentView(R.layout.fragment_courses);
+
+		XMLParser xpp = new XMLParser(getResources().getString(
+				R.string.course_xml_url));
 		
-		String[] values = new String[] { "CS 101", "CS 102", "CS 103"};
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, values);
+
+
+		ArrayAdapter<Course> adapter = null;
+		try {
+			adapter = new ArrayAdapter<Course>(getActivity(),
+					android.R.layout.simple_list_item_1, xpp.parseCourse());
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setListAdapter(adapter);
 	}
 
@@ -33,18 +54,18 @@ public class CoursesSectionFragment extends ListFragment implements
 	@Override
 	public void onTabSelected(Tab arg0, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-        mFragment = new CoursesSectionFragment();
-        // Attach fragment_courses.xml layout
-        ft.add(android.R.id.content, mFragment);
-        ft.attach(mFragment);
+		mFragment = new CoursesSectionFragment();
+		// Attach fragment_courses.xml layout
+		ft.add(android.R.id.content, mFragment);
+		ft.attach(mFragment);
 
 	}
 
 	@Override
 	public void onTabUnselected(Tab arg0, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-        // Remove fragment_courses.xml layout
-        ft.remove(mFragment);
+		// Remove fragment_courses.xml layout
+		ft.remove(mFragment);
 
 	}
 

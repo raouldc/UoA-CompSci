@@ -2,12 +2,17 @@ package com.raouldc.uoacompsci;
 
 public class Course {
 	String _title,_code,_semester;
-	
-	public Course(String code, String semester, String title)
-	{
-		_code = code;
-		_semester = semester;
-		_title = title;
+
+	public void set_title(String _title) {
+		this._title = _title;
+	}
+
+	public void set_code(String _code) {
+		this._code = _code;
+	}
+
+	public void set_semester(String _semester) {
+		this._semester = _semester;
 	}
 
 	public String get_title() {
@@ -20,6 +25,13 @@ public class Course {
 
 	public String get_semester() {
 		return _semester;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return _code + " : "+_title;
+		
 	}
 
 }

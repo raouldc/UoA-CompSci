@@ -6,5 +6,7 @@
     <string name="title_section1">Home</string>
     <string name="courses_section">Courses</string>
     <string name="staff_section">Staff</string>
+    <string name="course_xml_url">http://redsox.tcs.auckland.ac.nz/CSS/CSService.svc/courses</string>
+    <string name="staff_xml_url">http://redsox.tcs.auckland.ac.nz/CSS/CSService.svc/people</string>
 
 </resources>
