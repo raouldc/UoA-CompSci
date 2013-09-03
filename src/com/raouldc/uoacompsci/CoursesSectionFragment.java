@@ -5,32 +5,23 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-
-public class StaffSectionFragment extends ListFragment implements
+public class CoursesSectionFragment extends ListFragment implements
 		ActionBar.TabListener {
+
 	private ListFragment mFragment;
 
-	public StaffSectionFragment() {
-	}
-
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		String[] values = new String[] { "Mano Manorahan", "Raoul D'Cunha" };
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Get the view from fragment_courses.xml
+		getActivity().setContentView(R.layout.fragment_courses);
+		
+		String[] values = new String[] { "CS 101", "CS 102", "CS 103"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, values);
-
 		setListAdapter(adapter);
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		// Do something with the data
-
 	}
 
 	@Override
@@ -42,7 +33,7 @@ public class StaffSectionFragment extends ListFragment implements
 	@Override
 	public void onTabSelected(Tab arg0, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-        mFragment = new StaffSectionFragment();
+        mFragment = new CoursesSectionFragment();
         // Attach fragment_courses.xml layout
         ft.add(android.R.id.content, mFragment);
         ft.attach(mFragment);
