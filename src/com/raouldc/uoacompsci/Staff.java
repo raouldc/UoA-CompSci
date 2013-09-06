@@ -3,12 +3,6 @@ package com.raouldc.uoacompsci;
 public class Staff {
 
 	private String _name, _email;
-	
-	public Staff(String name, String email)
-	{
-		_name = name;
-		_email = email;
-	}
 
 	public String get_name() {
 		return _name;
@@ -26,6 +20,11 @@ public class Staff {
 		this._email = _email;
 	}
 
-
+	@Override
+	public String toString()
+	{
+		return _name;
+		
+	}
 
 }
