@@ -1,6 +1,8 @@
 package com.raouldc.uoacompsci;
 
-public class Course {
+import java.io.Serializable;
+
+public class Course implements Serializable{
 	String _title,_code,_semester;
 
 	public void set_title(String _title) {

@@ -52,10 +52,13 @@ public class StaffSectionFragment extends ListFragment implements
 		staffList = new ArrayList<Staff>();
 
 		
+		
 		File file = new File(getActivity().getCacheDir() + "/staffList");
 		//check if the cached ArrayList exists
 		if (!file.exists()) {
 			//if it doesnt exist, pull data from the server
+			adapter = new ArrayAdapter<Staff>(getActivity(),
+					android.R.layout.simple_list_item_1, staffList);
 			StaffTask t = new StaffTask(getActivity(), adapter);
 			t.execute(getResources().getString(R.string.staff_xml_url));
 		} else {
@@ -65,7 +68,10 @@ public class StaffSectionFragment extends ListFragment implements
 				ObjectInputStream is = new ObjectInputStream(fis);
 				Object readObject = is.readObject();
 				is.close();
+				staffList.clear();
 				staffList = (ArrayList) readObject;
+				adapter = new ArrayAdapter<Staff>(getActivity(),
+						android.R.layout.simple_list_item_1, staffList);
 			} catch (StreamCorruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -86,8 +92,7 @@ public class StaffSectionFragment extends ListFragment implements
 			// return (Region) readObject;
 			// }
 		}
-		adapter = new ArrayAdapter<Staff>(getActivity(),
-				android.R.layout.simple_list_item_1, staffList);
+
 		setListAdapter(adapter);
 
 	}
