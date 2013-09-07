@@ -1,6 +1,14 @@
 package com.raouldc.uoacompsci;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
@@ -26,7 +34,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
 public class StaffSectionFragment extends ListFragment implements
 		ActionBar.TabListener {
 	private ListFragment mFragment;
@@ -39,22 +46,57 @@ public class StaffSectionFragment extends ListFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Get the view from fragment_courses.xml
 		getActivity().setContentView(R.layout.fragment_staff);
 		staffList = new ArrayList<Staff>();
-		adapter = new ArrayAdapter<Staff>(getActivity(),
-					android.R.layout.simple_list_item_1, staffList);
-		StaffTask t = new StaffTask(getActivity(),adapter);
-		t.execute(getResources().getString(R.string.staff_xml_url));
 
+		
+		File file = new File(getActivity().getCacheDir() + "/staffList");
+		//check if the cached ArrayList exists
+		if (!file.exists()) {
+			//if it doesnt exist, pull data from the server
+			StaffTask t = new StaffTask(getActivity(), adapter);
+			t.execute(getResources().getString(R.string.staff_xml_url));
+		} else {
+			//else try to load the file
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				ObjectInputStream is = new ObjectInputStream(fis);
+				Object readObject = is.readObject();
+				is.close();
+				staffList = (ArrayList) readObject;
+			} catch (StreamCorruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OptionalDataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// if(readObject != null && readObject instanceof Region) {
+			// return (Region) readObject;
+			// }
+		}
+		adapter = new ArrayAdapter<Staff>(getActivity(),
+				android.R.layout.simple_list_item_1, staffList);
 		setListAdapter(adapter);
+
 	}
-	
-	private class StaffTask extends AsyncTask<String,Void,ArrayList<Staff>> {
+
+	private class StaffTask extends AsyncTask<String, Void, ArrayList<Staff>> {
 		private Context context;
 		private ArrayAdapter<Staff> _adap;
-		public StaffTask(Context c, ArrayAdapter<Staff> adap){
+
+		public StaffTask(Context c, ArrayAdapter<Staff> adap) {
 			context = c;
 			_adap = adap;
 		}
@@ -63,7 +105,7 @@ public class StaffSectionFragment extends ListFragment implements
 		protected ArrayList<Staff> doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			String url = params[0];
-			
+
 			// make an HTTP request
 			try {
 				DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -74,25 +116,28 @@ public class StaffSectionFragment extends ListFragment implements
 				String xmlContent = EntityUtils.toString(httpEntity);
 
 				// Create XMLPullParser instance
-				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+				XmlPullParserFactory factory = XmlPullParserFactory
+						.newInstance();
 				factory.setNamespaceAware(true);
-				XmlPullParser parser = factory.newPullParser();	
-				
-				
+				XmlPullParser parser = factory.newPullParser();
+
 				parser.setInput(new StringReader(xmlContent));
 
 				int eventType = parser.getEventType();
 				String text = "";
-				Staff staff = null;
+				Staff staff;
+				String upi = "";
+				VCardParser.setHttpClient(httpClient);
 				while (eventType != XmlPullParser.END_DOCUMENT) {
 					String tagname = parser.getName();
 					switch (eventType) {
-					case XmlPullParser.START_TAG:
-						if (tagname.equalsIgnoreCase("Person")) {
-							// create a new instance of employee
-							staff = new Staff();
-						}
-						break;
+					// dont need this
+					// case XmlPullParser.START_TAG:
+					// if (tagname.equalsIgnoreCase("Person")) {
+					// // create a new instance of employee
+					// staff = new Staff();
+					// }
+					// break;
 
 					case XmlPullParser.TEXT:
 						text = parser.getText();
@@ -101,9 +146,12 @@ public class StaffSectionFragment extends ListFragment implements
 					case XmlPullParser.END_TAG:
 						if (tagname.equalsIgnoreCase("Person")) {
 							// add employee object to list
-							staffList.add(staff);
+							// send text to UPI parser and store in List
+							Staff s = VCardParser.parse(getResources()
+									.getString(R.string.vcard_url) + upi, upi);
+							staffList.add(s);
 						} else if (tagname.equalsIgnoreCase("uPIField")) {
-							staff.set_name(text);
+							upi = text;
 						}
 						break;
 
@@ -125,13 +173,25 @@ public class StaffSectionFragment extends ListFragment implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			//write to a file for faster loading in the future
+			try {
+				FileOutputStream fos = new FileOutputStream(new File(getActivity().getCacheDir() + "/staffList"));
+				ObjectOutputStream oos = new ObjectOutputStream(fos);
+				oos.writeObject(staffList);
+				oos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			return staffList;
 		}
-		
-	    @Override
-	    protected void onPostExecute(ArrayList<Staff> staffList){
-	        _adap.notifyDataSetChanged();
-	    }
+
+		@Override
+		protected void onPostExecute(ArrayList<Staff> staffList) {
+			_adap.notifyDataSetChanged();
+		}
 
 	}
 
@@ -150,18 +210,18 @@ public class StaffSectionFragment extends ListFragment implements
 	@Override
 	public void onTabSelected(Tab arg0, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-        mFragment = new StaffSectionFragment();
-        // Attach fragment_courses.xml layout
-        ft.add(android.R.id.content, mFragment);
-        ft.attach(mFragment);
+		mFragment = new StaffSectionFragment();
+		// Attach fragment_courses.xml layout
+		ft.add(android.R.id.content, mFragment);
+		ft.attach(mFragment);
 
 	}
 
 	@Override
 	public void onTabUnselected(Tab arg0, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-        // Remove fragment_courses.xml layout
-        ft.remove(mFragment);
+		// Remove fragment_courses.xml layout
+		ft.remove(mFragment);
 
 	}
 

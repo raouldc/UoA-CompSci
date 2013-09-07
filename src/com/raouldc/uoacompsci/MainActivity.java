@@ -25,7 +25,7 @@ public class MainActivity extends FragmentActivity implements
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Create first Tab
-        tab = actionBar.newTab().setTabListener(new StaffSectionFragment());
+        tab = actionBar.newTab().setTabListener(new HomeSectionFragment());
         // Create your own custom icon
         tab.setText(R.string.title_section1);
         actionBar.addTab(tab);
