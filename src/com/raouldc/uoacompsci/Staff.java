@@ -1,11 +1,13 @@
 package com.raouldc.uoacompsci;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
-public class Staff implements Serializable{
+public class Staff implements Comparator<Staff>,Serializable{
 
 	//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
-	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url,  _photo;
+	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url,  _photo,_address;
+
 	/**
 	 * @param _name
 	 * @param _fullname
@@ -19,7 +21,7 @@ public class Staff implements Serializable{
 	 */
 	public Staff(String _name, String _fullname, String _upi, String _tel_work,
 			String _tel_fax, String _email, String _organisation, String _url,
-			String _photo) {
+			String _photo, String _address) {
 		this._name = _name;
 		this._fullname = _fullname;
 		this._upi = _upi;
@@ -29,6 +31,7 @@ public class Staff implements Serializable{
 		this._organisation = _organisation;
 		this._url = _url;
 		this._photo = _photo;
+		this._address =_address;
 	}
 	
 
@@ -52,6 +55,12 @@ public class Staff implements Serializable{
 	{
 		return _name +" "+ _upi;
 		
+	}
+
+	@Override
+	public int compare(Staff lhs, Staff rhs) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

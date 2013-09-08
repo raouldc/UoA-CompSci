@@ -36,13 +36,16 @@ public class VCardParser {
 			//email
 			
 			String email =vcard.getEmails().get(0).getValue();
+			vcard.getStructuredName().getGiven();
 			
 			String formattedname = vcard.getFormattedName().getValue();
+			
+			String name = vcard.getStructuredName().getGiven() + " " + vcard.getStructuredName().getFamily();
 			
 			String tel = vcard.getTelephoneNumbers().get(0).toString();
 			
 			String fax = vcard.getTelephoneNumbers().get(1).toString();
-			String address = vcard.getAddresses().get(0).toString();
+			String address = vcard.getAddresses().get(0).getExtendedAddress();
 			
 			String title = vcard.getTitles().get(0).getValue();
 			
@@ -55,7 +58,7 @@ public class VCardParser {
 			//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
 			
 
-			return new Staff(formattedname,formattedname,upi,tel,tel,email,organisation,url,null);
+			return new Staff(name,formattedname,upi,tel,tel,email,organisation,url,null,address);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
