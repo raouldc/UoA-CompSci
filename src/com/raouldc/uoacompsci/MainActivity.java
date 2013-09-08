@@ -52,17 +52,15 @@ public class MainActivity extends FragmentActivity implements
 		return true;
 	}
 	
+	//create activity when settings is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
- 
         case R.id.action_settings:
             Intent i = new Intent(this, SettingsActivity.class);
             startActivityForResult(i, 1);
             break;
- 
         }
- 
         return true;
     }
 
