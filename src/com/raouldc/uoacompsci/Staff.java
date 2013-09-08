@@ -1,9 +1,8 @@
 package com.raouldc.uoacompsci;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
-public class Staff implements Comparator<Staff>,Serializable{
+public class Staff implements Comparable<Staff>,Serializable{
 
 	//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
 	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url,  _photo,_address;
@@ -57,10 +56,11 @@ public class Staff implements Comparator<Staff>,Serializable{
 		
 	}
 
+
 	@Override
-	public int compare(Staff lhs, Staff rhs) {
+	public int compareTo(Staff arg0) {
 		// TODO Auto-generated method stub
-		return 0;
+		return this._name.toLowerCase().compareTo(arg0._name.toLowerCase());
 	}
 
 }

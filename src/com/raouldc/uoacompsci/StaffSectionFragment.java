@@ -11,6 +11,7 @@ import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -178,7 +179,7 @@ public class StaffSectionFragment extends ListFragment implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			Collections.sort(staffList);
 			//write to a file for faster loading in the future
 			try {
 				FileOutputStream fos = new FileOutputStream(new File(getActivity().getCacheDir() + "/staffList"));
