@@ -5,9 +5,11 @@ package com.raouldc.uoacompsci;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -49,6 +51,20 @@ public class MainActivity extends FragmentActivity implements
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+ 
+        case R.id.action_settings:
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, 1);
+            break;
+ 
+        }
+ 
+        return true;
+    }
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,

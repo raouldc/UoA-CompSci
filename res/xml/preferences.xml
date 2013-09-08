@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory>
+        <Preference android:key="deleteCache" android:summary="Clear the cached files to get new data" android:title="Delete Cached Files"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
