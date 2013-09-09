@@ -34,20 +34,28 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
+import android.widget.TextView;
+
 import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView;
+import com.raouldc.uoacompsci.pinnedheaderlistview.SectionedBaseAdapter;
 import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 
 public class StaffSectionFragment extends ListFragment implements
 		ActionBar.TabListener {
 	private ListFragment mFragment;
-	private ArrayAdapter<Staff> adapter;
+	private StaffListAdapter adapter;
 	private ArrayList<Staff> staffList;
 
 	public StaffSectionFragment() {
@@ -61,49 +69,65 @@ public class StaffSectionFragment extends ListFragment implements
 		getActivity().setContentView(R.layout.fragment_staff);
 		staffList = new ArrayList<Staff>();
 
-		
-		
-		File file = new File(getActivity().getCacheDir() + "/staffList");
-		//check if the cached ArrayList exists
-		if (!file.exists()) {
-			//if it doesnt exist, pull data from the server
-			adapter = new ArrayAdapter<Staff>(getActivity(),
-					android.R.layout.simple_list_item_1, staffList);
-			StaffTask t = new StaffTask(getActivity(), adapter);
-			t.execute(getResources().getString(R.string.staff_xml_url));
-		} else {
-			//else try to load the file
-			try {
-				FileInputStream fis = new FileInputStream(file);
-				ObjectInputStream is = new ObjectInputStream(fis);
-				Object readObject = is.readObject();
-				is.close();
-				staffList.clear();
-				staffList = (ArrayList) readObject;
-				adapter = new ArrayAdapter<Staff>(getActivity(),
-						android.R.layout.simple_list_item_1, staffList);
-			} catch (StreamCorruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OptionalDataException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// if(readObject != null && readObject instanceof Region) {
-			// return (Region) readObject;
-			// }
-		}
+		adapter = new StaffListAdapter();
+		LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		RelativeLayout layout = (RelativeLayout) inflator.inflate(R.layout.fragment_staff, null);
+		//View pinnedHeader = inflator.inflate(R.layout.header_item,null);
 
+
+	//set item
+	//((TextView) layout.findViewById(R.id.textItem)).setText("Section " + section + " item " + position);
+		
+		PinnedHeaderListView listview =(PinnedHeaderListView) layout.findViewById(R.id.pinnedListView);
 		setListAdapter(adapter);
+		listview.setAdapter(adapter);
+
+		
+		//
+		//listview.setAdapter(adapter);
+				
+				
+//		File file = new File(getActivity().getCacheDir() + "/staffList");
+//		//check if the cached ArrayList exists
+//		if (!file.exists()) {
+//			//if it doesnt exist, pull data from the server
+//			adapter = new ArrayAdapter<Staff>(getActivity(),
+//					android.R.layout.simple_list_item_1, staffList);
+//			StaffTask t = new StaffTask(getActivity(), adapter);
+//			t.execute(getResources().getString(R.string.staff_xml_url));
+//		} else {
+//			//else try to load the file
+//			try {
+//				FileInputStream fis = new FileInputStream(file);
+//				ObjectInputStream is = new ObjectInputStream(fis);
+//				Object readObject = is.readObject();
+//				is.close();
+//				staffList.clear();
+//				staffList = (ArrayList) readObject;
+//				adapter = new ArrayAdapter<Staff>(getActivity(),
+//						android.R.layout.simple_list_item_1, staffList);
+//			} catch (StreamCorruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (OptionalDataException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			// if(readObject != null && readObject instanceof Region) {
+//			// return (Region) readObject;
+//			// }
+//		}
+
+		//setListAdapter(adapter);
 
 	}
 
@@ -113,87 +137,72 @@ public class StaffSectionFragment extends ListFragment implements
 		
 	}
 	
-	public class StaffListAdapter extends CursorAdapter implements OnScrollListener, SectionIndexer, 
-    PinnedSectionedHeaderAdapter{
-		
-        private final String[] mSections = { getString(R.string.allow), getString(R.string.deny) };
-        //private final int[] mSectionTypes = { 0, 1 };
-        private int[] mSectionPositions = { 0, -1 };
-
-        private boolean mDisplaySectionHeaders = true;
-        private Cursor mCursor;
-        
-        private HashMap<Long, Integer> mPositions;
-        private int mLastCachedPosition = -1;
-
-		public StaffListAdapter(Cursor cursor, Context context) {
-            super(context, cursor, false);
-            mPositions = new HashMap<Long, Integer>(cursor!=null?
-                    cursor.getCount():0);
-            mLastCachedPosition = -1;
-            mCursor = cursor;
-		}
+	public class StaffListAdapter extends SectionedBaseAdapter {
 
 		@Override
-		public void bindView(View arg0, Context arg1, Cursor arg2) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
+		public Object getItem(int section, int position) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public boolean isSectionHeader(int position) {
+		public long getItemId(int section, int position) {
 			// TODO Auto-generated method stub
-			return false;
+			return 0;
+		}
+
+		@Override
+		public int getSectionCount() {
+			//*************DO THIS*****************
+			// TODO Auto-generated method stub
+			return 2;
+		}
+
+		@Override
+		public int getCountForSection(int section) {
+			//*************DO THIS*****************
+			// TODO Auto-generated method stub
+			return 20;
+		}
+
+		@Override
+		public View getItemView(int section, int position, View convertView,
+				ViewGroup parent) {
+			// TODO Auto-generated method stub
+			LinearLayout layout = null;
+			if(convertView == null)
+			{
+				LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				layout = (LinearLayout) inflator.inflate(R.layout.list_item, null);
+			}
+			else
+			{
+				layout = (LinearLayout)convertView;
+			}
+			//set item
+			((TextView) layout.findViewById(R.id.listtextItem)).setText("Section " + section + " item " + position);
+			return layout;
 		}
 
 		@Override
 		public View getSectionHeaderView(int section, View convertView,
 				ViewGroup parent) {
-			// TODO Auto-generated method stub
-			return null;
+			LinearLayout layout = null;
+			if(convertView == null)
+			{
+				LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				layout = (LinearLayout) inflator.inflate(R.layout.header_item, null);
+			}
+			else
+			{
+				layout = (LinearLayout)convertView;
+			}
+			//set item
+			((TextView) layout.findViewById(R.id.headertextItem)).setText("Header for section " + section);
+			return layout;
 		}
+		
 
-		@Override
-		public int getSectionHeaderViewType(int section) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int getPositionForSection(int arg0) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int getSectionForPosition(int arg0) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public Object[] getSections() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onScrollStateChanged(AbsListView arg0, int arg1) {
-			// TODO Auto-generated method stub
-			
-		}
 		
 	}
 	
