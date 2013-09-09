@@ -1,12 +1,11 @@
-package za.co.immedia.pinnedheaderlistview;
+package com.raouldc.uoacompsci.pinnedheaderlistview;
 
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import za.co.immedia.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 
-public abstract class SectionedBaseAdapter extends BaseAdapter implements PinnedSectionedHeaderAdapter {
+public abstract class SectionedBaseAdapter extends BaseAdapter implements com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter {
 
     private static int HEADER_VIEW_TYPE = 0;
     private static int ITEM_VIEW_TYPE = 0;

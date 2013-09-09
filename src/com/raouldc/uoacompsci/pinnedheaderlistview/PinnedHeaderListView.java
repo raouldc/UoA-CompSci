@@ -1,4 +1,4 @@
-package za.co.immedia.pinnedheaderlistview;
+package com.raouldc.uoacompsci.pinnedheaderlistview;
 
 import android.content.Context;
 import android.graphics.Canvas;

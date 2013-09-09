@@ -12,6 +12,7 @@ import java.io.StreamCorruptedException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,11 +30,19 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.CursorAdapter;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
+import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView;
+import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 
 public class StaffSectionFragment extends ListFragment implements
 		ActionBar.TabListener {
@@ -98,6 +107,97 @@ public class StaffSectionFragment extends ListFragment implements
 
 	}
 
+	
+	private void setupListView()
+	{
+		
+	}
+	
+	public class StaffListAdapter extends CursorAdapter implements OnScrollListener, SectionIndexer, 
+    PinnedSectionedHeaderAdapter{
+		
+        private final String[] mSections = { getString(R.string.allow), getString(R.string.deny) };
+        //private final int[] mSectionTypes = { 0, 1 };
+        private int[] mSectionPositions = { 0, -1 };
+
+        private boolean mDisplaySectionHeaders = true;
+        private Cursor mCursor;
+        
+        private HashMap<Long, Integer> mPositions;
+        private int mLastCachedPosition = -1;
+
+		public StaffListAdapter(Cursor cursor, Context context) {
+            super(context, cursor, false);
+            mPositions = new HashMap<Long, Integer>(cursor!=null?
+                    cursor.getCount():0);
+            mLastCachedPosition = -1;
+            mCursor = cursor;
+		}
+
+		@Override
+		public void bindView(View arg0, Context arg1, Cursor arg2) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isSectionHeader(int position) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public View getSectionHeaderView(int section, View convertView,
+				ViewGroup parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getSectionHeaderViewType(int section) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getPositionForSection(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getSectionForPosition(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Object[] getSections() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView arg0, int arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	
 	private class StaffTask extends AsyncTask<String, Void, ArrayList<Staff>> {
 		private Context context;
 		private ArrayAdapter<Staff> _adap;
