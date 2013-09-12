@@ -13,4 +13,11 @@
             android:height="42dp"
             android:textColor="#FF000000"
             android:background="#FFF"/>
+
+    <ImageView
+        android:id="@+id/staffpic"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:scaleType="centerCrop" />
+
 </LinearLayout>
