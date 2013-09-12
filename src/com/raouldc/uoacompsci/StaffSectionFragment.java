@@ -57,6 +57,10 @@ public class StaffSectionFragment extends ListFragment implements
 	private ListFragment mFragment;
 	private StaffListAdapter adapter;
 	private ArrayList<Staff> staffList;
+	
+	private int[] sectionIndexes;
+	private String[] sectionHeaders;
+	private int sectionCount;
 
 	public StaffSectionFragment() {
 	}
@@ -79,55 +83,54 @@ public class StaffSectionFragment extends ListFragment implements
 	//((TextView) layout.findViewById(R.id.textItem)).setText("Section " + section + " item " + position);
 		
 		PinnedHeaderListView listview =(PinnedHeaderListView) layout.findViewById(R.id.pinnedListView);
-		setListAdapter(adapter);
-		listview.setAdapter(adapter);
+
 
 		
 		//
 		//listview.setAdapter(adapter);
 				
 				
-//		File file = new File(getActivity().getCacheDir() + "/staffList");
-//		//check if the cached ArrayList exists
-//		if (!file.exists()) {
-//			//if it doesnt exist, pull data from the server
-//			adapter = new ArrayAdapter<Staff>(getActivity(),
-//					android.R.layout.simple_list_item_1, staffList);
-//			StaffTask t = new StaffTask(getActivity(), adapter);
-//			t.execute(getResources().getString(R.string.staff_xml_url));
-//		} else {
-//			//else try to load the file
-//			try {
-//				FileInputStream fis = new FileInputStream(file);
-//				ObjectInputStream is = new ObjectInputStream(fis);
-//				Object readObject = is.readObject();
-//				is.close();
-//				staffList.clear();
-//				staffList = (ArrayList) readObject;
-//				adapter = new ArrayAdapter<Staff>(getActivity(),
-//						android.R.layout.simple_list_item_1, staffList);
-//			} catch (StreamCorruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (OptionalDataException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (ClassNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			// if(readObject != null && readObject instanceof Region) {
-//			// return (Region) readObject;
-//			// }
-//		}
+		File file = new File(getActivity().getCacheDir() + "/staffList");
+		//check if the cached ArrayList exists
+		if (!file.exists()) {
+			//if it doesnt exist, pull data from the server
+			adapter = new StaffListAdapter();
+			StaffTask t = new StaffTask(getActivity(), adapter);
+			t.execute(getResources().getString(R.string.staff_xml_url));
+		} else {
+			//else try to load the file
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				ObjectInputStream is = new ObjectInputStream(fis);
+				Object readObject = is.readObject();
+				is.close();
+				staffList.clear();
+				staffList = (ArrayList) readObject;
+				adapter = new StaffListAdapter();
+				initializeSections();
+			} catch (StreamCorruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OptionalDataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// if(readObject != null && readObject instanceof Region) {
+			// return (Region) readObject;
+			// }
+		}
 
-		//setListAdapter(adapter);
+		setListAdapter(adapter);
+		listview.setAdapter(adapter);
 
 	}
 
@@ -153,16 +156,18 @@ public class StaffSectionFragment extends ListFragment implements
 
 		@Override
 		public int getSectionCount() {
-			//*************DO THIS*****************
-			// TODO Auto-generated method stub
-			return 2;
+			return sectionCount;
 		}
 
 		@Override
 		public int getCountForSection(int section) {
-			//*************DO THIS*****************
-			// TODO Auto-generated method stub
-			return 20;
+			if (section == sectionCount)
+			{
+				return staffList.size()-sectionIndexes[section];
+			}
+			else{
+				return sectionIndexes[section+1] - sectionIndexes[section];
+			}
 		}
 
 		@Override
@@ -180,7 +185,7 @@ public class StaffSectionFragment extends ListFragment implements
 				layout = (LinearLayout)convertView;
 			}
 			//set item
-			((TextView) layout.findViewById(R.id.listtextItem)).setText("Section " + section + " item " + position);
+			((TextView) layout.findViewById(R.id.listtextItem)).setText(staffList.get(sectionIndexes[section]+position).toString());
 			return layout;
 		}
 
@@ -198,7 +203,7 @@ public class StaffSectionFragment extends ListFragment implements
 				layout = (LinearLayout)convertView;
 			}
 			//set item
-			((TextView) layout.findViewById(R.id.headertextItem)).setText("Header for section " + section);
+			((TextView) layout.findViewById(R.id.headertextItem)).setText(sectionHeaders[section]);
 			return layout;
 		}
 		
@@ -209,11 +214,11 @@ public class StaffSectionFragment extends ListFragment implements
 	
 	private class StaffTask extends AsyncTask<String, Void, ArrayList<Staff>> {
 		private Context context;
-		private ArrayAdapter<Staff> _adap;
+		private StaffListAdapter _adap;
 
-		public StaffTask(Context c, ArrayAdapter<Staff> adap) {
+		public StaffTask(Context c, StaffListAdapter adapter) {
 			context = c;
-			_adap = adap;
+			_adap = adapter;
 		}
 
 		@Override
@@ -263,7 +268,7 @@ public class StaffSectionFragment extends ListFragment implements
 							// add employee object to list
 							// send text to UPI parser and store in List
 							Staff s = VCardParser.parse(getResources()
-									.getString(R.string.vcard_url) + upi, upi);
+									.getString(R.string.vcard_url) + upi, upi,getActivity());
 							staffList.add(s);
 						} else if (tagname.equalsIgnoreCase("uPIField")) {
 							upi = text;
@@ -299,7 +304,7 @@ public class StaffSectionFragment extends ListFragment implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			initializeSections();
 			return staffList;
 		}
 
@@ -308,6 +313,26 @@ public class StaffSectionFragment extends ListFragment implements
 			_adap.notifyDataSetChanged();
 		}
 
+	}
+	
+	private void initializeSections()
+	{
+		//find indexes of headers in the list
+		sectionIndexes = new int[26];
+		sectionHeaders = new String[26];
+		sectionHeaders[0] = staffList.get(0).get_name().substring(0, 1);
+		sectionIndexes[0] = 0;
+		
+		sectionCount = 0;
+		for( int i = 1; i<staffList.size();i++)
+		{
+			if (staffList.get(i).get_name().substring(0, 1).compareTo(sectionHeaders[sectionCount])>=1)
+			{
+				sectionCount++;
+				sectionHeaders[sectionCount] = staffList.get(i).get_name().substring(0, 1);
+				sectionIndexes[sectionCount] = i;
+			}
+		}
 	}
 
 	@Override
