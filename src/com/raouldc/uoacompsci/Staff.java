@@ -2,11 +2,13 @@ package com.raouldc.uoacompsci;
 
 import java.io.Serializable;
 
+import android.graphics.Bitmap;
+
 public class Staff implements Comparable<Staff>,Serializable{
 
 	//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
-	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url,  _photo,_address;
-
+	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url, _address;
+	private byte[] _photo;
 	/**
 	 * @param _name
 	 * @param _fullname
@@ -20,7 +22,7 @@ public class Staff implements Comparable<Staff>,Serializable{
 	 */
 	public Staff(String _name, String _fullname, String _upi, String _tel_work,
 			String _tel_fax, String _email, String _organisation, String _url,
-			String _photo, String _address) {
+			byte[] _photo, String _address) {
 		this._name = _name;
 		this._fullname = _fullname;
 		this._upi = _upi;
