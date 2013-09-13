@@ -37,21 +37,16 @@ import android.support.v4.widget.CursorAdapter;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView;
 import com.raouldc.uoacompsci.pinnedheaderlistview.SectionedBaseAdapter;
@@ -67,6 +62,9 @@ public class StaffSectionFragment extends ListFragment implements
 	private String[] sectionHeaders;
 	private int sectionCount;
 
+	public StaffSectionFragment() {
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,8 +76,20 @@ public class StaffSectionFragment extends ListFragment implements
 		adapter = new StaffListAdapter();
 		LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		RelativeLayout layout = (RelativeLayout) inflator.inflate(R.layout.fragment_staff, null);
-		PinnedHeaderListView listview =(PinnedHeaderListView) layout.findViewById(R.id.pinnedListView);
+		//View pinnedHeader = inflator.inflate(R.layout.header_item,null);
+
+
+	//set item
+	//((TextView) layout.findViewById(R.id.textItem)).setText("Section " + section + " item " + position);
 		
+		PinnedHeaderListView listview =(PinnedHeaderListView) layout.findViewById(R.id.pinnedListView);
+
+
+		
+		//
+		//listview.setAdapter(adapter);
+				
+				
 		File file = new File(getActivity().getCacheDir() + "/staffList");
 		//check if the cached ArrayList exists
 		if (!file.exists()) {
@@ -114,13 +124,22 @@ public class StaffSectionFragment extends ListFragment implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			// if(readObject != null && readObject instanceof Region) {
+			// return (Region) readObject;
+			// }
 		}
+
 		setListAdapter(adapter);
 		listview.setAdapter(adapter);
+
+	}
+
+	
+	private void setupListView()
+	{
+		
 	}
 	
-
-
 	public class StaffListAdapter extends SectionedBaseAdapter {
 
 		@Override
@@ -191,6 +210,7 @@ public class StaffSectionFragment extends ListFragment implements
 
 		
 	}
+	
 	
 	private class StaffTask extends AsyncTask<String, Void, ArrayList<Staff>> {
 		private Context context;
@@ -316,27 +336,10 @@ public class StaffSectionFragment extends ListFragment implements
 	}
 
 	@Override
-	public void onListItemClick(ListView adapterView, View view, int rawPosition, long id) {
-        SectionedBaseAdapter adapter;
-        if (adapterView.getAdapter().getClass().equals(HeaderViewListAdapter.class)) {
-            HeaderViewListAdapter wrapperAdapter = (HeaderViewListAdapter) adapterView.getAdapter();
-            adapter = (SectionedBaseAdapter) wrapperAdapter.getWrappedAdapter();
-        } else {
-            adapter = (SectionedBaseAdapter) adapterView.getAdapter();
-        }
-        int section = adapter.getSectionForPosition(rawPosition);
-        int position = adapter.getPositionInSectionForPosition(rawPosition);
-
-        if (position != -1) {
-            //onSectionClick(adapterView, view, section, id);
-        	Staff s = staffList.get(sectionIndexes[section]+position);
-        	Toast.makeText(getActivity(), staffList.get(sectionIndexes[section]+position).toString(), Toast.LENGTH_LONG).show();
-        } else {
-           // onItemClick(adapterView, view, section, position, id);
-        }
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// Do something with the data
 
 	}
-	
 
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
