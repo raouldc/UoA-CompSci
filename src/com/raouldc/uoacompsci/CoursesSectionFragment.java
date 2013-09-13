@@ -23,21 +23,37 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import com.raouldc.uoacompsci.pinnedheaderlistview.PinnedHeaderListView;
+import com.raouldc.uoacompsci.pinnedheaderlistview.SectionedBaseAdapter;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class CoursesSectionFragment extends ListFragment implements
 		ActionBar.TabListener {
 
 	private ListFragment mFragment;
-	private ArrayAdapter<Course> adapter;
+	private CourseListAdapter adapter;
 	private ArrayList<Course> courseList;
+	
+	private int[] sectionIndexes;
+	private String[] sectionHeaders;
+	private int sectionCount;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,15 +61,17 @@ public class CoursesSectionFragment extends ListFragment implements
 		// Get the view from fragment_courses.xml
 		getActivity().setContentView(R.layout.fragment_courses);
 		courseList = new ArrayList<Course>();
+		
+		LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		RelativeLayout layout = (RelativeLayout) inflator.inflate(R.layout.fragment_courses, null);
+		PinnedHeaderListView listview =(PinnedHeaderListView) layout.findViewById(R.id.pinnedListView);
 
-		setListAdapter(adapter);
 		File file = new File(getActivity().getCacheDir() + "/courseList");
 		//check if the cached ArrayList exists
 		if (!file.exists()) {
 			//if it doesnt exist, pull data from the server
-			adapter = new ArrayAdapter<Course>(getActivity(),
-					android.R.layout.simple_list_item_1, courseList);
-			CoursesTask t = new CoursesTask(getActivity(),adapter);
+			adapter = new CourseListAdapter();
+			CoursesTask t = new CoursesTask(getActivity());
 			t.execute(getResources().getString(R.string.course_xml_url));
 		} else {
 			//else try to load the file
@@ -63,8 +81,8 @@ public class CoursesSectionFragment extends ListFragment implements
 				Object readObject = is.readObject();
 				is.close();
 				courseList = (ArrayList) readObject;
-				adapter = new ArrayAdapter<Course>(getActivity(),
-						android.R.layout.simple_list_item_1, courseList);
+				adapter = new CourseListAdapter();
+				initializeSections();
 			} catch (StreamCorruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -87,14 +105,102 @@ public class CoursesSectionFragment extends ListFragment implements
 		}
 
 		setListAdapter(adapter);
+		listview.setAdapter(adapter);
+	}
+	
+	public class CourseListAdapter extends SectionedBaseAdapter {
+
+		@Override
+		public Object getItem(int section, int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int section, int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getSectionCount() {
+			return sectionCount;
+		}
+
+		@Override
+		public int getCountForSection(int section) {
+			if (section == sectionCount)
+			{
+				return courseList.size()-sectionIndexes[section];
+			}
+			else{
+				return sectionIndexes[section+1] - sectionIndexes[section];
+			}
+		}
+
+		@Override
+		public View getItemView(int section, int position, View convertView,
+				ViewGroup parent) {
+			// TODO Auto-generated method stub
+			RelativeLayout layout = null;
+			if(convertView == null)
+			{
+				LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				layout = (RelativeLayout) inflator.inflate(R.layout.course_list_item, null);
+			}
+			else
+			{
+				layout = (RelativeLayout)convertView;
+			}
+			//set item
+			Course courses = courseList.get(sectionIndexes[section]+position);
+			((TextView) layout.findViewById(R.id.listtextItemTitle)).setText(courses.get_code());
+			((TextView) layout.findViewById(R.id.listtextItemDescription)).setText(courses.get_title());
+			return layout;
+		}
+
+		@Override
+		public View getSectionHeaderView(int section, View convertView,
+				ViewGroup parent) {
+			LinearLayout layout = null;
+			if(convertView == null)
+			{
+				LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				layout = (LinearLayout) inflator.inflate(R.layout.header_item, null);
+			}
+			else
+			{
+				layout = (LinearLayout)convertView;
+			}
+			//set item
+			String temp = "";
+			if (sectionHeaders[section].equals("100")){
+				temp = "Stage I";
+			}
+			else if (sectionHeaders[section].equals("200")){
+				temp = "Stage II";
+			}
+			else if (sectionHeaders[section].equals("300")){
+				temp = "Stage III";
+			}
+			else if (sectionHeaders[section].equals("600")){
+				temp = "Postgraduate";
+			}
+			
+			
+			((TextView) layout.findViewById(R.id.headertextItem)).setText(temp);
+			return layout;
+		}
+		
+
+		
 	}
 	
 	private class CoursesTask extends AsyncTask<String,Void,ArrayList<Course>> {
 		private Context context;
 		private ArrayAdapter<Course> _adap;
-		public CoursesTask(Context c, ArrayAdapter<Course> adap){
+		public CoursesTask(Context c){
 			context = c;
-			_adap = adap;
 		}
 
 		@Override
@@ -177,18 +283,37 @@ public class CoursesSectionFragment extends ListFragment implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			initializeSections();
 			return courseList;
 		}
 		
 	    @Override
 	    protected void onPostExecute(ArrayList<Course> courseList){
-	        _adap.notifyDataSetChanged();
+	       adapter.notifyDataSetChanged();
 	    }
 
 	}
 
-
+	private void initializeSections()
+	{
+		//find indexes of headers in the list
+		sectionIndexes = new int[26];
+		sectionHeaders = new String[26];
+		sectionHeaders[0] = courseList.get(0).get_code().substring(8, 9)+"00";
+		sectionIndexes[0] = 0;
+		
+		sectionCount = 0;
+		for( int i = 1; i<courseList.size();i++)
+		{
+			if (courseList.get(i).get_code().substring(8, 9).compareTo(sectionHeaders[sectionCount])>=1)
+			{
+				sectionCount++;
+				sectionHeaders[sectionCount] = courseList.get(i).get_code().substring(8, 9)+"00";
+				sectionIndexes[sectionCount] = i;
+			}
+		}
+	}
+	
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 		// TODO Auto-generated method stub
