@@ -36,6 +36,11 @@ public class Staff implements Comparable<Staff>,Serializable{
 	}
 	
 
+	public byte[] get_photo() {
+		return _photo;
+	}
+
+
 	public String get_upi() {
 		return _upi;
 	}
@@ -54,7 +59,7 @@ public class Staff implements Comparable<Staff>,Serializable{
 	@Override
 	public String toString()
 	{
-		return _name +" "+ _upi;
+		return _name;
 		
 	}
 

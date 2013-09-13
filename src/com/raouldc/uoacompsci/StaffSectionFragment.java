@@ -31,6 +31,8 @@ import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
@@ -46,6 +48,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.HeaderViewListAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -155,18 +158,21 @@ public class StaffSectionFragment extends ListFragment implements
 		public View getItemView(int section, int position, View convertView,
 				ViewGroup parent) {
 			// TODO Auto-generated method stub
-			LinearLayout layout = null;
+			RelativeLayout layout = null;
 			if(convertView == null)
 			{
 				LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				layout = (LinearLayout) inflator.inflate(R.layout.list_item, null);
+				layout = (RelativeLayout) inflator.inflate(R.layout.list_item, null);
 			}
 			else
 			{
-				layout = (LinearLayout)convertView;
+				layout = (RelativeLayout)convertView;
 			}
 			//set item
-			((TextView) layout.findViewById(R.id.listtextItem)).setText(staffList.get(sectionIndexes[section]+position).toString());
+			Staff staff = staffList.get(sectionIndexes[section]+position);
+			((TextView) layout.findViewById(R.id.listtextItem)).setText(staff.toString());
+			Bitmap img = BitmapFactory.decodeByteArray(staff.get_photo(), 0, staff.get_photo().length);
+			((ImageView) layout.findViewById(R.id.staffpic)).setImageBitmap(img);
 			return layout;
 		}
 
