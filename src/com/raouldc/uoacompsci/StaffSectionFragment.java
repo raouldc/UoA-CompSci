@@ -30,11 +30,13 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -337,6 +339,11 @@ public class StaffSectionFragment extends ListFragment implements
             //onSectionClick(adapterView, view, section, id);
         	Staff s = staffList.get(sectionIndexes[section]+position);
         	Toast.makeText(getActivity(), staffList.get(sectionIndexes[section]+position).toString(), Toast.LENGTH_LONG).show();
+    		//create new Intent
+    		Intent nextScreen = new Intent(getActivity(), StaffDetailActivity.class);
+    		nextScreen.putExtra("com.raouldc.uoacompsci.Staff", (Parcelable)s);
+    		//start Activity
+    		startActivity(nextScreen);
         } else {
            // onItemClick(adapterView, view, section, position, id);
         }
