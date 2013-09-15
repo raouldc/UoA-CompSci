@@ -34,7 +34,7 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="5dp" >
-
+	
                     <TextView
                         android:id="@+id/itemDate"
                         style="?android:attr/listSeparatorTextViewStyle"
@@ -45,7 +45,7 @@
                     <ListView
                         android:id="@+id/newslistView"
                         android:layout_width="fill_parent"
-                        android:layout_height="266dp" >
+                        android:layout_height="283dp" >
                     </ListView>
 
                     <TextView

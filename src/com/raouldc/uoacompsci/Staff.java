@@ -2,15 +2,14 @@ package com.raouldc.uoacompsci;
 
 import java.io.Serializable;
 
-import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
+public class Staff implements Comparable<Staff>, Serializable {
 
-public class Staff implements Comparable<Staff>,Serializable{
-
-	//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
-	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url, _address;
+	// Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email,
+	// organisation, url, photo(jpg)
+	private String _name, _fullname, _upi, _tel_work, _tel_fax, _email,
+			_organisation, _url, _address;
 	private byte[] _photo;
+
 	/**
 	 * @param _name
 	 * @param _fullname
@@ -26,11 +25,10 @@ public class Staff implements Comparable<Staff>,Serializable{
 		this._upi = _upi;
 		this._url = "None";
 	}
-	
+
 	public byte[] get_photo() {
 		return _photo;
 	}
-
 
 	public void set_name(String _name) {
 		this._name = _name;
@@ -80,37 +78,28 @@ public class Staff implements Comparable<Staff>,Serializable{
 		return _name;
 	}
 
-
-
 	public String get_email() {
 		return _email;
 	}
 
-
 	@Override
-	public String toString()
-	{
-		if(_name==null)
-		{
+	public String toString() {
+		if (_name == null) {
 			return _upi;
 		}
 		return _name;
-		
-	}
 
+	}
 
 	@Override
 	public int compareTo(Staff arg0) {
 		// TODO Auto-generated method stub
-		if(_name==null)
-		{
+		if (_name == null) {
 			return this._upi.toLowerCase().compareTo(arg0._upi.toLowerCase());
-		}
-		else
-		{
+		} else {
 			return this._name.toLowerCase().compareTo(arg0._name.toLowerCase());
 		}
-		
+
 	}
 
 	public String get_fullname() {

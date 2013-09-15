@@ -23,10 +23,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="15dp"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="38dp"
         android:background="#FFF"
+        android:paddingBottom="15dp"
+        android:paddingRight="15dp"
         android:textColor="#777777"
         android:textSize="14dp" />
 

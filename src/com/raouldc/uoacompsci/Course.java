@@ -2,8 +2,8 @@ package com.raouldc.uoacompsci;
 
 import java.io.Serializable;
 
-public class Course implements Serializable{
-	String _title,_code,_semester;
+public class Course implements Serializable {
+	String _title, _code, _semester;
 
 	public void set_title(String _title) {
 		this._title = _title;
@@ -28,12 +28,11 @@ public class Course implements Serializable{
 	public String get_semester() {
 		return _semester;
 	}
-	
+
 	@Override
-	public String toString()
-	{
-		return _code + " : "+_title;
-		
+	public String toString() {
+		return _code + " : " + _title;
+
 	}
 
 }
