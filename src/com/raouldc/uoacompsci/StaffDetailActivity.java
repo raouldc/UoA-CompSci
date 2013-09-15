@@ -1,6 +1,8 @@
 package com.raouldc.uoacompsci;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,10 +50,16 @@ public class StaffDetailActivity extends Activity {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
 				final int position, final long itemID) {
-			String tempPhone = phone.replace("x", ",");
-			Intent callIntent = new Intent(Intent.ACTION_CALL);
-			callIntent.setData(Uri.parse("tel:" + tempPhone));
-			startActivity(callIntent);
+			try {
+				String tempPhone = phone.replace("x", ",");
+				String encodedPhonenumber = URLEncoder.encode(tempPhone, "UTF-8");
+				Intent callIntent = new Intent(Intent.ACTION_CALL);
+				callIntent.setData(Uri.parse("tel:" + encodedPhonenumber));
+				startActivity(callIntent);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 	};
