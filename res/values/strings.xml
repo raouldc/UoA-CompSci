@@ -9,5 +9,7 @@
     <string name="course_xml_url">http://redsox.tcs.auckland.ac.nz/CSS/CSService.svc/courses</string>
     <string name="staff_xml_url">http://redsox.tcs.auckland.ac.nz/CSS/CSService.svc/people</string>
     <string name="vcard_url">http://www.cs.auckland.ac.nz/our_staff/vcard.php?upi=</string>
+    <string name="title_activity_staff_detail">StaffDetailActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

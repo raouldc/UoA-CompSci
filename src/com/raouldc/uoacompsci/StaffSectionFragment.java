@@ -341,7 +341,14 @@ public class StaffSectionFragment extends ListFragment implements
         	Toast.makeText(getActivity(), staffList.get(sectionIndexes[section]+position).toString(), Toast.LENGTH_LONG).show();
     		//create new Intent
     		Intent nextScreen = new Intent(getActivity(), StaffDetailActivity.class);
-    		nextScreen.putExtra("com.raouldc.uoacompsci.Staff", (Parcelable)s);
+    		
+    		//staff parameters
+    		nextScreen.putExtra("name", s.get_name());
+    		nextScreen.putExtra("address", s.get_address());
+    		nextScreen.putExtra("email", s.get_email());
+    		nextScreen.putExtra("photo", s.get_photo());
+    		nextScreen.putExtra("url", s.get_url());
+    		nextScreen.putExtra("phone", s.get_tel_work());
     		//start Activity
     		startActivity(nextScreen);
         } else {

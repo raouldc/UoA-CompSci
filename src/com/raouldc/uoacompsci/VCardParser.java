@@ -46,9 +46,9 @@ public class VCardParser {
 			String name = vcard.getStructuredName().getGiven() + " "
 					+ vcard.getStructuredName().getFamily();
 
-			String tel = vcard.getTelephoneNumbers().get(0).toString();
+			String tel = vcard.getTelephoneNumbers().get(0).getText();
 
-			String fax = vcard.getTelephoneNumbers().get(1).toString();
+			String fax = vcard.getTelephoneNumbers().get(1).getText();
 			String address = vcard.getAddresses().get(0).getExtendedAddress();
 
 			String title = vcard.getTitles().get(0).getValue();

@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Staff implements Comparable<Staff>,Serializable,Parcelable{
+public class Staff implements Comparable<Staff>,Serializable{
 
 	//Vcard fields: Tel(Work and Fax), Name, Fullname,Address, Title, email, organisation, url, photo(jpg)
 	private String _name, _fullname,_upi, _tel_work, _tel_fax, _email, _organisation,  _url, _address;
@@ -37,10 +37,10 @@ public class Staff implements Comparable<Staff>,Serializable,Parcelable{
 		this._address =_address;
 	}
 	
-	public Staff(Parcel in)
-	{
-		readFromParcel(in);
-	}
+//	public Staff(Parcel in)
+//	{
+//		readFromParcel(in);
+//	}
 	
 
 	public byte[] get_photo() {
@@ -77,54 +77,75 @@ public class Staff implements Comparable<Staff>,Serializable,Parcelable{
 		return this._name.toLowerCase().compareTo(arg0._name.toLowerCase());
 	}
 
+	public String get_fullname() {
+		return _fullname;
+	}
 
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
+	public String get_tel_work() {
+		return _tel_work;
+	}
+
+	public String get_url() {
+		return _url;
+	}
+
+	public String get_address() {
+		return _address;
 	}
 
 
-	@Override
-	public void writeToParcel(Parcel arg0, int arg1) {
-		// TODO Auto-generated method stub
-		arg0.writeString(_name);
-		arg0.writeString(_fullname);
-		arg0.writeString(_upi);
-		arg0.writeString(_tel_work);
-		arg0.writeString(_tel_fax);
-		arg0.writeString(_email);
-		arg0.writeString(_organisation);
-		arg0.writeString(_url);
-		arg0.writeString(_address);
-		arg0.writeByteArray(_photo);
-	}
+//	@Override
+//	public int describeContents() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//
+//	@Override
+//	public void writeToParcel(Parcel arg0, int arg1) {
+//		// TODO Auto-generated method stub
+//		arg0.writeString(_name);
+//		arg0.writeString(_fullname);
+//		arg0.writeString(_upi);
+//		arg0.writeString(_tel_work);
+//		arg0.writeString(_tel_fax);
+//		arg0.writeString(_email);
+//		arg0.writeString(_organisation);
+//		arg0.writeString(_url);
+//		arg0.writeString(_address);
+//		arg0.writeByteArray(_photo);
+//	}
+//	
+//	private void readFromParcel(Parcel in) {
+//		 
+//		// We just need to read back each
+//		// field in the order that it was
+//		// written to the parcel
+//		_name = in.readString();
+//		_fullname = in.readString();
+//		_upi = in.readString();
+//		_tel_work= in.readString();
+//		_tel_fax= in.readString();
+//		_email= in.readString();
+//		_organisation= in.readString();
+//		_url= in.readString();
+//		_address= in.readString();
+//		try {
+//			in.readByteArray(_photo);
+//		} catch (NullPointerException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
-	private void readFromParcel(Parcel in) {
-		 
-		// We just need to read back each
-		// field in the order that it was
-		// written to the parcel
-		_name = in.readString();
-		_fullname = in.readString();
-		_upi = in.readString();
-		_tel_work= in.readString();
-		_tel_fax= in.readString();
-		_email= in.readString();
-		_organisation= in.readString();
-		_url= in.readString();
-		_address= in.readString();
-		in.readByteArray(_photo);
-	}
-	
-	public static final Parcelable.Creator CREATOR =
-	    	new Parcelable.Creator() {
-	            public Staff createFromParcel(Parcel in) {
-	                return new Staff(in);
-	            }
-	 
-	            public Staff[] newArray(int size) {
-	                return new Staff[size];
-	            }
-	        };
+//	public static final Parcelable.Creator CREATOR =
+//	    	new Parcelable.Creator() {
+//	            public Staff createFromParcel(Parcel in) {
+//	                return new Staff(in);
+//	            }
+//	 
+//	            public Staff[] newArray(int size) {
+//	                return new Staff[size];
+//	            }
+//	        };
 }
