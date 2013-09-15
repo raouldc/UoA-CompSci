@@ -66,6 +66,10 @@ public class StaffDetailActivity extends Activity {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
 				final int position, final long itemID) {
+			Intent emailIntent = new Intent(Intent.ACTION_SEND);
+			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});		  
+			emailIntent.setType("message/rfc822");
+			startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
 		}
 	};
 	
