@@ -1,22 +1,15 @@
 package com.raouldc.uoacompsci;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ListActivity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +19,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 public class StaffDetailActivity extends Activity {
@@ -38,8 +29,8 @@ public class StaffDetailActivity extends Activity {
 	private ListView emaillv;
 	private ListView urllv;
 
-	/* Item click listener for the list1 item click event. */
-	private transient OnItemClickListener list1ClickListener = new OnItemClickListener() {
+	/* Item click listener for the phone item click event. */
+	private transient OnItemClickListener phonelist1ClickListener = new OnItemClickListener() {
 
 		/*
 		 * (non-Javadoc)
@@ -52,11 +43,16 @@ public class StaffDetailActivity extends Activity {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
 				final int position, final long itemID) {
+			String tempPhone = phone.replace("x", ",");
+			Intent callIntent = new Intent(Intent.ACTION_CALL);
+			callIntent.setData(Uri.parse("tel:"+tempPhone));
+			startActivity(callIntent);
+
 		}
 	};
 
-	/* Item click listener for the list2 item click event. */
-	private transient OnItemClickListener list2ClickListener = new OnItemClickListener() {
+	/* Item click listener for the address item click event. */
+	private transient OnItemClickListener addresslvlist1ClickListener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
@@ -64,8 +60,17 @@ public class StaffDetailActivity extends Activity {
 		}
 	};
 
-	/* Item click listener for the list3 item click event. */
-	private transient OnItemClickListener list3ClickListener = new OnItemClickListener() {
+	/* Item click listener for the email item click event. */
+	private transient OnItemClickListener emaillvlist1ClickListener = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(final AdapterView<?> parent, final View view,
+				final int position, final long itemID) {
+		}
+	};
+	
+	/* Item click listener for the url item click event. */
+	private transient OnItemClickListener urllvlist1ClickListener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
@@ -91,8 +96,6 @@ public class StaffDetailActivity extends Activity {
 		Bitmap bm = BitmapFactory.decodeByteArray(photo, 0, photo.length);
 		((ImageView) findViewById(R.id.staffDetailPic)).setImageBitmap(bm);
 
-		// StaffDetailListView lv = new
-		// StaffDetailListView(R.id.phonelistView1);
 		phonelv = (ListView) findViewById(R.id.phonelistView1);
 		addresslv = (ListView) findViewById(R.id.addressListView1);
 		emaillv = (ListView) findViewById(R.id.emailListView1);
@@ -111,7 +114,10 @@ public class StaffDetailActivity extends Activity {
 				android.R.layout.simple_list_item_1, new ArrayList<String>(
 						Arrays.asList(url))));
 		
-		phonelv.setOnItemClickListener(list1ClickListener);
+		phonelv.setOnItemClickListener(phonelist1ClickListener);
+		addresslv.setOnItemClickListener(addresslvlist1ClickListener);
+		emaillv.setOnItemClickListener(emaillvlist1ClickListener);
+		urllv.setOnItemClickListener(urllvlist1ClickListener);
 
 		setupActionBar();
 	}
