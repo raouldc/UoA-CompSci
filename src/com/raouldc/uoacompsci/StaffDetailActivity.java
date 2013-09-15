@@ -1,15 +1,23 @@
 package com.raouldc.uoacompsci;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Photo;
+import android.provider.ContactsContract.Data;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -87,6 +95,7 @@ public class StaffDetailActivity extends Activity {
 			}
 		}
 	};
+	private Bitmap bm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +111,7 @@ public class StaffDetailActivity extends Activity {
 		url = b.getString("url");
 		phone = b.getString("phone");
 
-		//
-		Bitmap bm = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+		bm = BitmapFactory.decodeByteArray(photo, 0, photo.length);
 		((ImageView) findViewById(R.id.staffDetailPic)).setImageBitmap(bm);
 
 		phonelv = (ListView) findViewById(R.id.phonelistView1);
@@ -141,5 +149,126 @@ public class StaffDetailActivity extends Activity {
 		ab.setDisplayHomeAsUpEnabled(true);
 		ab.setTitle(name);
 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.staffdetail, menu);
+		return true;
+	}
+
+	// create activity when settings is pressed
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.addTOContacts:
+			ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+			ops.add(ContentProviderOperation
+					.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+					.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+					.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+					.build());
+
+			// ------------------------------------------------------ Names
+			if (name != null) {
+				ops.add(ContentProviderOperation
+						.newInsert(ContactsContract.Data.CONTENT_URI)
+						.withValueBackReference(
+								ContactsContract.Data.RAW_CONTACT_ID, 0)
+						.withValue(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+						.withValue(
+								ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+								name).build());
+			}
+
+			// ------------------------------------------------------ Work
+			// Numbers
+			if (phone != null) {
+				ops.add(ContentProviderOperation
+						.newInsert(ContactsContract.Data.CONTENT_URI)
+						.withValueBackReference(
+								ContactsContract.Data.RAW_CONTACT_ID, 0)
+						.withValue(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+						.withValue(
+								ContactsContract.CommonDataKinds.Phone.NUMBER,
+								phone)
+						.withValue(
+								ContactsContract.CommonDataKinds.Phone.TYPE,
+								ContactsContract.CommonDataKinds.Phone.TYPE_WORK)
+						.build());
+			}
+
+			// ------------------------------------------------------ Email
+			if (email != null) {
+				ops.add(ContentProviderOperation
+						.newInsert(ContactsContract.Data.CONTENT_URI)
+						.withValueBackReference(
+								ContactsContract.Data.RAW_CONTACT_ID, 0)
+						.withValue(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+						.withValue(ContactsContract.CommonDataKinds.Email.DATA,
+								email)
+						.withValue(
+								ContactsContract.CommonDataKinds.Email.TYPE,
+								ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+						.build());
+			}
+
+			if (bm != null) {
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bm.compress(CompressFormat.JPEG, 100, stream);
+				byte[] bytes = stream.toByteArray();
+
+				ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+						.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+						.withValue(Data.MIMETYPE, Photo.CONTENT_ITEM_TYPE)
+						.withValue(Photo.PHOTO, bytes).build());
+			}
+
+			if (url != null) {
+				ops.add(ContentProviderOperation
+						.newInsert(ContactsContract.Data.CONTENT_URI)
+						.withValueBackReference(
+								ContactsContract.Data.RAW_CONTACT_ID, 0)
+						.withValue(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+						.withValue(
+								ContactsContract.CommonDataKinds.Website.DATA,
+								url).build());
+
+			}
+			
+			if (address != null) {
+				ops.add(ContentProviderOperation
+						.newInsert(ContactsContract.Data.CONTENT_URI)
+						.withValueBackReference(
+								ContactsContract.Data.RAW_CONTACT_ID, 0)
+						.withValue(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+						.withValue(
+								ContactsContract.CommonDataKinds.StructuredPostal.DATA,
+								address).build());
+
+			}
+
+			// Asking the Contact provider to create a new contact
+			try {
+				getContentResolver()
+						.applyBatch(ContactsContract.AUTHORITY, ops);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			break;
+		}
+		return true;
 	}
 }
