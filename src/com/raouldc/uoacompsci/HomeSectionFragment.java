@@ -10,10 +10,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -35,57 +38,67 @@ import android.net.Uri;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeSectionFragment extends Fragment implements ActionBar.TabListener {
+public class HomeSectionFragment extends Fragment implements
+		ActionBar.TabListener {
 	private Fragment mFragment;
 	private View mView;
-	
+	private Activity local;
+
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		mView = inflater.inflate(R.layout.fragment_home, container, false);
-        TextView t= (TextView) mView.findViewById(R.id.textView1);
-		t.setText("Welcome to UoA CompSci");
-		
+
 		HomeScreenImageTask imgT = new HomeScreenImageTask(getActivity());
 		imgT.execute(getResources().getString(R.string.home_image_url));
-		
-        return mView;
-    }
+
+		local = getActivity();
+		GetRSSDataTask task = new GetRSSDataTask();
+
+		// Start download RSS task
+		task.execute(getResources().getString(R.string.news_rss_feed));
+		GetRSSDataTask task2 = new GetRSSDataTask();
+		task2.execute(getResources().getString(R.string.events_rss_feed));
+		GetRSSDataTask task3 = new GetRSSDataTask();
+		task3.execute(getResources().getString(R.string.seminars_rss_feed));
+		return mView;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-	
-	
+
 	public class ListListener implements OnItemClickListener {
-	    // Our listener will contain a reference to the list of RSS Items
-	    // List item's reference
-	    List<RssItem> listItems;
-	    // And a reference to a calling activity
-	    // Calling activity reference
-	    Activity activity;
-	    /** We will set those references in our constructor.*/
-	    public ListListener(List<RssItem> aListItems, Activity anActivity) {
-	        listItems = aListItems;
-	        activity  = anActivity;
-	    }
-	 
-	    /** Start a browser with url from the rss item.*/
-	    @Override
+		// Our listener will contain a reference to the list of RSS Items
+		// List item's reference
+		List<RssItem> listItems;
+		// And a reference to a calling activity
+		// Calling activity reference
+		Activity activity;
+
+		/** We will set those references in our constructor. */
+		public ListListener(List<RssItem> aListItems, Activity anActivity) {
+			listItems = aListItems;
+			activity = anActivity;
+		}
+
+		/** Start a browser with url from the rss item. */
+		@Override
 		public void onItemClick(AdapterView parent, View view, int pos, long id) {
-	        // We create an Intent which is going to display data
-	        Intent i = new Intent(Intent.ACTION_VIEW);
-	        // We have to set data for our new Intent
-	        i.setData(Uri.parse(listItems.get(pos).getLink()));
-	        // And start activity with our Intent
-	        activity.startActivity(i);
-	    }
+			// We create an Intent which is going to display data
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			// We have to set data for our new Intent
+			i.setData(Uri.parse(listItems.get(pos).getLink()));
+			// And start activity with our Intent
+			activity.startActivity(i);
+		}
 	}
-	
-	private class HomeScreenImageTask extends AsyncTask<String,Void,Bitmap> {
+
+	private class HomeScreenImageTask extends AsyncTask<String, Void, Bitmap> {
 		private Context context;
 
-		public HomeScreenImageTask(Context c){
+		public HomeScreenImageTask(Context c) {
 			context = c;
 		}
 
@@ -117,53 +130,120 @@ public class HomeSectionFragment extends Fragment implements ActionBar.TabListen
 			}
 			return bitmap;
 		}
-		
-	    @Override
-	    protected void onPostExecute(Bitmap bmp){
-	       ImageView img = (ImageView)mView.findViewById(R.id.homeImage);
-	       img.setImageBitmap(bmp);
-	    }
+
+		@Override
+		protected void onPostExecute(Bitmap bmp) {
+			if (isVisible()) {
+				ImageView img = (ImageView) mView.findViewById(R.id.homeImage);
+				img.setImageBitmap(bmp);
+			}
+		}
 
 	}
 
-	private class GetRSSDataTask extends AsyncTask<String, Void, List<RssItem> > {
-        @Override
-        protected List<RssItem> doInBackground(String... urls) {
-             
-            // Debug the task thread name
-            try {
-                // Create RSS reader
-                RssReader rssReader = new RssReader(urls[0]);
-             
-                // Parse RSS, get items
-                return rssReader.getItems();
-             
-            } catch (Exception e) {
-            }
-             
-            return null;
-        }
-         
-        @Override
-        protected void onPostExecute(List<RssItem> result) {
-             
-//            // Get a ListView from main view
-//            ListView itcItems = (ListView) findViewById(R.id.listMainView);
-//                         
-//            // Create a list adapter
-//            ArrayAdapter<RssItem> adapter = new ArrayAdapter<RssItem>(local,android.R.layout.simple_list_item_1, result);
-//            // Set list adapter for the ListView
-//            itcItems.setAdapter(adapter);
-//                         
-//            // Set list view item click listener
-//            itcItems.setOnItemClickListener(new ListListener(result, local));
-        }
-    }   
-	
+	private class GetRSSDataTask extends AsyncTask<String, Void, List<RssItem>> {
+		String url = "";
+
+		@Override
+		protected List<RssItem> doInBackground(String... urls) {
+
+			// Debug the task thread name
+			try {
+				// Create RSS reader
+				url = urls[0];
+				RssReader rssReader = new RssReader(url);
+
+				// Parse RSS, get items
+				List<RssItem> x = rssReader.getItems();
+				return rssReader.getItems();
+
+			} catch (Exception e) {
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(List<RssItem> result) {
+			if (isVisible()) {
+				ListView itcItems = null;
+				// Get a ListView from main view
+				if (url.equals(getResources().getString(R.string.news_rss_feed))) {
+					itcItems = (ListView) local.findViewById(R.id.newslistView);
+				} else if (url.equals(getResources().getString(
+						R.string.seminars_rss_feed))) {
+					itcItems = (ListView) local
+							.findViewById(R.id.seminarslistView);
+				} else if (url.equals(getResources().getString(
+						R.string.events_rss_feed))) {
+					itcItems = (ListView) local
+							.findViewById(R.id.eventslistView);
+				}
+
+				RSSListAdapter rAdap = new RSSListAdapter(result);
+
+				// Set list adapter for the ListView
+				itcItems.setAdapter(rAdap);
+
+				// Set list view item click listener
+				itcItems.setOnItemClickListener(new ListListener(result, local));
+			}
+		}
+	}
+
+	private class RSSListAdapter extends BaseAdapter {
+		private List<RssItem> _items;
+
+		public RSSListAdapter(List<RssItem> result) {
+			_items = result;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return _items.size();
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return _items.get(arg0);
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View V = convertView;
+
+			if (V == null) {
+				LayoutInflater vi = (LayoutInflater) local
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				V = vi.inflate(R.layout.rss_list_item, null);
+
+			}
+			TextView title = (TextView) V.findViewById(R.id.itemTitle);
+			TextView date = (TextView) V.findViewById(R.id.itemDate);
+			TextView description = (TextView) V
+					.findViewById(R.id.itemDescription);
+
+			title.setText(_items.get(position).getTitle());
+			date.setText(_items.get(position).getDate());
+			description.setText(_items.get(position).getDescription());
+
+			return V;
+		}
+
+	}
+
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
