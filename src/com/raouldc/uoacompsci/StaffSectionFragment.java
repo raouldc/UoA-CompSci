@@ -172,10 +172,12 @@ public class StaffSectionFragment extends ListFragment implements
 			Staff staff = staffList.get(sectionIndexes[section] + position);
 			((TextView) layout.findViewById(R.id.listtextItem)).setText(staff
 					.toString());
-			Bitmap img = BitmapFactory.decodeByteArray(staff.get_photo(), 0,
-					staff.get_photo().length);
-			((ImageView) layout.findViewById(R.id.staffpic))
-					.setImageBitmap(img);
+			if (staff.get_photo() != null) {
+				Bitmap img = BitmapFactory.decodeByteArray(staff.get_photo(),
+						0, staff.get_photo().length);
+				((ImageView) layout.findViewById(R.id.staffpic))
+						.setImageBitmap(img);
+			}
 			return layout;
 		}
 
@@ -234,7 +236,7 @@ public class StaffSectionFragment extends ListFragment implements
 				String text = "";
 				Staff staff;
 				String upi = "";
-				VCardParser.setHttpClient(httpClient);
+
 				while (eventType != XmlPullParser.END_DOCUMENT) {
 					String tagname = parser.getName();
 					switch (eventType) {
@@ -254,9 +256,10 @@ public class StaffSectionFragment extends ListFragment implements
 						if (tagname.equalsIgnoreCase("Person")) {
 							// add employee object to list
 							// send text to UPI parser and store in List
-							Staff s = VCardParser.parse(getResources()
-									.getString(R.string.vcard_url) + upi, upi,
-									getActivity());
+							// Staff s = VCardParser.parse(getResources()
+							// .getString(R.string.vcard_url) + upi, upi,
+							// getActivity());
+							Staff s = new Staff(upi);
 							staffList.add(s);
 						} else if (tagname.equalsIgnoreCase("uPIField")) {
 							upi = text;
@@ -283,16 +286,6 @@ public class StaffSectionFragment extends ListFragment implements
 			}
 			Collections.sort(staffList);
 			// write to a file for faster loading in the future
-			try {
-				FileOutputStream fos = new FileOutputStream(new File(
-						getActivity().getCacheDir() + "/staffList"));
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
-				oos.writeObject(staffList);
-				oos.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			initializeSections();
 			return staffList;
 		}
@@ -301,24 +294,26 @@ public class StaffSectionFragment extends ListFragment implements
 		protected void onPostExecute(ArrayList<Staff> staffList) {
 			if (isVisible()) {
 				_adap.notifyDataSetChanged();
+				VCardParser v = new VCardParser(context, _adap);
+				v.execute(staffList);
 			}
 		}
 
 	}
 
-	private void initializeSections() {
+	public void initializeSections() {
 		// find indexes of headers in the list
 		sectionIndexes = new int[26];
 		sectionHeaders = new String[26];
-		sectionHeaders[0] = staffList.get(0).get_name().substring(0, 1);
+		sectionHeaders[0] = staffList.get(0).toString().substring(0, 1);
 		sectionIndexes[0] = 0;
 
 		sectionCount = 0;
 		for (int i = 1; i < staffList.size(); i++) {
-			if (staffList.get(i).get_name().substring(0, 1)
+			if (staffList.get(i).toString().substring(0, 1)
 					.compareTo(sectionHeaders[sectionCount]) >= 1) {
 				sectionCount++;
-				sectionHeaders[sectionCount] = staffList.get(i).get_name()
+				sectionHeaders[sectionCount] = staffList.get(i).toString()
 						.substring(0, 1);
 				sectionIndexes[sectionCount] = i;
 			}
@@ -343,10 +338,6 @@ public class StaffSectionFragment extends ListFragment implements
 		if (position != -1) {
 			// onSectionClick(adapterView, view, section, id);
 			Staff s = staffList.get(sectionIndexes[section] + position);
-			Toast.makeText(
-					getActivity(),
-					staffList.get(sectionIndexes[section] + position)
-							.toString(), Toast.LENGTH_LONG).show();
 			// create new Intent
 			Intent nextScreen = new Intent(getActivity(),
 					StaffDetailActivity.class);

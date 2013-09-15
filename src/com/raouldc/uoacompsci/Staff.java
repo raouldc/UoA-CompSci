@@ -22,31 +22,55 @@ public class Staff implements Comparable<Staff>,Serializable{
 	 * @param _url
 	 * @param _photo
 	 */
-	public Staff(String _name, String _fullname, String _upi, String _tel_work,
-			String _tel_fax, String _email, String _organisation, String _url,
-			byte[] _photo, String _address) {
-		this._name = _name;
-		this._fullname = _fullname;
+	public Staff(String _upi) {
 		this._upi = _upi;
-		this._tel_work = _tel_work;
-		this._tel_fax = _tel_fax;
-		this._email = _email;
-		this._organisation = _organisation;
-		this._url = _url;
-		this._photo = _photo;
-		this._address =_address;
+		this._url = "None";
 	}
 	
-//	public Staff(Parcel in)
-//	{
-//		readFromParcel(in);
-//	}
-	
-
 	public byte[] get_photo() {
 		return _photo;
 	}
 
+
+	public void set_name(String _name) {
+		this._name = _name;
+	}
+
+	public void set_fullname(String _fullname) {
+		this._fullname = _fullname;
+	}
+
+	public void set_upi(String _upi) {
+		this._upi = _upi;
+	}
+
+	public void set_tel_work(String _tel_work) {
+		this._tel_work = _tel_work;
+	}
+
+	public void set_tel_fax(String _tel_fax) {
+		this._tel_fax = _tel_fax;
+	}
+
+	public void set_email(String _email) {
+		this._email = _email;
+	}
+
+	public void set_organisation(String _organisation) {
+		this._organisation = _organisation;
+	}
+
+	public void set_url(String _url) {
+		this._url = _url;
+	}
+
+	public void set_address(String _address) {
+		this._address = _address;
+	}
+
+	public void set_photo(byte[] _photo) {
+		this._photo = _photo;
+	}
 
 	public String get_upi() {
 		return _upi;
@@ -66,6 +90,10 @@ public class Staff implements Comparable<Staff>,Serializable{
 	@Override
 	public String toString()
 	{
+		if(_name==null)
+		{
+			return _upi;
+		}
 		return _name;
 		
 	}
@@ -74,7 +102,15 @@ public class Staff implements Comparable<Staff>,Serializable{
 	@Override
 	public int compareTo(Staff arg0) {
 		// TODO Auto-generated method stub
-		return this._name.toLowerCase().compareTo(arg0._name.toLowerCase());
+		if(_name==null)
+		{
+			return this._upi.toLowerCase().compareTo(arg0._upi.toLowerCase());
+		}
+		else
+		{
+			return this._name.toLowerCase().compareTo(arg0._name.toLowerCase());
+		}
+		
 	}
 
 	public String get_fullname() {
@@ -92,60 +128,4 @@ public class Staff implements Comparable<Staff>,Serializable{
 	public String get_address() {
 		return _address;
 	}
-
-
-//	@Override
-//	public int describeContents() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//
-//	@Override
-//	public void writeToParcel(Parcel arg0, int arg1) {
-//		// TODO Auto-generated method stub
-//		arg0.writeString(_name);
-//		arg0.writeString(_fullname);
-//		arg0.writeString(_upi);
-//		arg0.writeString(_tel_work);
-//		arg0.writeString(_tel_fax);
-//		arg0.writeString(_email);
-//		arg0.writeString(_organisation);
-//		arg0.writeString(_url);
-//		arg0.writeString(_address);
-//		arg0.writeByteArray(_photo);
-//	}
-//	
-//	private void readFromParcel(Parcel in) {
-//		 
-//		// We just need to read back each
-//		// field in the order that it was
-//		// written to the parcel
-//		_name = in.readString();
-//		_fullname = in.readString();
-//		_upi = in.readString();
-//		_tel_work= in.readString();
-//		_tel_fax= in.readString();
-//		_email= in.readString();
-//		_organisation= in.readString();
-//		_url= in.readString();
-//		_address= in.readString();
-//		try {
-//			in.readByteArray(_photo);
-//		} catch (NullPointerException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-//	public static final Parcelable.Creator CREATOR =
-//	    	new Parcelable.Creator() {
-//	            public Staff createFromParcel(Parcel in) {
-//	                return new Staff(in);
-//	            }
-//	 
-//	            public Staff[] newArray(int size) {
-//	                return new Staff[size];
-//	            }
-//	        };
 }

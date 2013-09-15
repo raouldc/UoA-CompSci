@@ -79,6 +79,15 @@ public class StaffDetailActivity extends Activity {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view,
 				final int position, final long itemID) {
+			if (!url.equals("None"))
+			{
+				// We create an Intent which is going to display data
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				// We have to set data for our new Intent
+				i.setData(Uri.parse(url));
+				// And start activity with our Intent
+				startActivity(i);
+			}
 		}
 	};
 

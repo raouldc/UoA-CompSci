@@ -157,7 +157,7 @@ public class CoursesSectionFragment extends ListFragment implements
 			((TextView) layout.findViewById(R.id.listtextItemTitle))
 					.setText(courses.get_code());
 			((TextView) layout.findViewById(R.id.listtextItemDescription))
-					.setText(courses.get_title());
+					.setText(courses.get_title()+" ("+courses.get_semester().replaceAll(";",",")+")");
 			return layout;
 		}
 
