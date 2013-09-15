@@ -11,5 +11,9 @@
     <string name="vcard_url">http://www.cs.auckland.ac.nz/our_staff/vcard.php?upi=</string>
     <string name="title_activity_staff_detail">StaffDetailActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="home_image_url">http://redsox.tcs.auckland.ac.nz/CSS/CSService.svc/home_image</string>
+    <string name="seminars_rss_feed">http://www.cs.auckland.ac.nz/uoa/home/template/events_feed.rss?category=seminars</string>
+    <string name="events_rss_feed">http://www.cs.auckland.ac.nz/uoa/home/template/events_feed.rss?category=other_events</string>
+    <string name="news_rss_feed">http://www.cs.auckland.ac.nz/uoa/home/template/news_feed.rss?category=science_cs_news</string>
 
 </resources>
