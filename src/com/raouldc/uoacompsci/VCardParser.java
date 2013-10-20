@@ -47,7 +47,7 @@ public class VCardParser extends
 				HttpResponse httpResponse = httpClient.execute(httpPost);
 				HttpEntity httpEntity = httpResponse.getEntity();
 				String content = EntityUtils.toString(httpEntity);
-
+				//Set all the fields
 				VCard vcard = Ezvcard.parse(content).first();
 
 				staff.set_email(vcard.getEmails().get(0).getValue());
@@ -63,7 +63,6 @@ public class VCardParser extends
 				staff.set_address(vcard.getAddresses().get(0)
 						.getExtendedAddress());
 
-				// vcard.getTitles().get(0).getValue();
 
 				staff.set_organisation(vcard.getOrganization().getValues()
 						.get(0));
@@ -84,11 +83,6 @@ public class VCardParser extends
 				}
 
 				staff.set_photo(photo);
-				// String photo = vcard.getPhotos().get(0).toString();
-
-				// Vcard fields: Tel(Work and Fax), Name, Fullname,Address,
-				// Title,
-				// email, organisation, url, photo(jpg)
 
 				FileOutputStream fos = new FileOutputStream(new File(
 						myContext.getCacheDir() + "/staffList"));

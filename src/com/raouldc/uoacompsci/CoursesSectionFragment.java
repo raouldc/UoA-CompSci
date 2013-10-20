@@ -228,7 +228,7 @@ public class CoursesSectionFragment extends ListFragment implements
 					switch (eventType) {
 					case XmlPullParser.START_TAG:
 						if (tagname.equalsIgnoreCase("Course")) {
-							// create a new instance of employee
+							// create a new instance of course
 							course = new Course();
 						}
 						break;
